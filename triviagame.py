@@ -1,11 +1,6 @@
-'''
-This program uses tkinter to run a game in a graphical user interface. The user
-is presented first with a welcome page, then many various scenarios. Each choice
-they make brings them to a different page, where they either achieve an ending
-or are presented with another choice.
-'''
 from tkinter import * #Import all of tkinter 
 from tkinter import font as tkfont
+import datetime
 class MainGame(Tk): # Creates the GUI and catalogs and sets up the other classes
     def __init__(self,*args,**kwargs): # Takes itself, arguments, and keyword arguments
         Tk.__init__(self,*args,**kwargs) # Initializes itself, arguments, and keyword arguments
@@ -30,11 +25,25 @@ class MainGame(Tk): # Creates the GUI and catalogs and sets up the other classes
             
         self.show_frame('welcomePage')
 
-                                                
+    score = 0
+
     def show_frame(self,page_name): #brings a specified frame to the front of the display
         frame=self.frames[page_name]
         frame.tkraise()
 
+    def savenQuit(controller,self,root):
+        date=datetime.datetime.now()
+        scoreEntry = f"User played on {date} and earned {MainGame.score} points.\n"
+        with open('scores.txt', 'a') as f:
+            f.write(scoreEntry)
+        root.destroy()
+        
+   
+    def correctAnswer(controller,self):
+        MainGame.score+=1
+        correct_frame = controller.frames["correct"]
+        correct_frame.points.config(text=f'Score: {MainGame.score} point(s)')
+        controller.show_frame("correct")
                                                 
 class welcomePage(Frame):              
     def __init__(self,parent,controller,root):
@@ -87,11 +96,8 @@ class homePage(Frame):
         lq1.grid(row=2,column=5)
         lq2.grid(row=3,column=5)
 
-        endgame=Button(self,text='End Game',command=root.destroy) # Closes the client
+        endgame=Button(self,text='Save and Quit',command=lambda: MainGame.savenQuit(controller,self,root)) # Closes the client
         endgame.grid(row=4,column=3)
-
-        # spacing=Label(self,text='                                   ')
-        # spacing.grid(row=5,column=1)
 
         def buttonClick(button, frame):
             button.destroy()
@@ -108,7 +114,7 @@ class sports1(Frame):
         question.grid(row=0,column=2)
 
         answer1=Button(self,text='Comerica Park',command=lambda: controller.show_frame('incorrect')) # shows the incorrect answer page
-        answer2=Button(self,text='Bennent Park',command=lambda: controller.show_frame('correct'))
+        answer2=Button(self,text='Bennent Park',command=lambda: MainGame.correctAnswer(controller,self))
         answer3=Button(self,text='Navin Field',command=lambda: controller.show_frame('incorrect'))
         answer4=Button(self,text='Briggs Stadium',command=lambda: controller.show_frame('incorrect'))
 
@@ -128,7 +134,7 @@ class sports2(Frame):
         question=Label(self,text="Where did the Detroit Red Wings play before they moved to Little Caesars Arena?")
         question.grid(row=0,column=2)
 
-        answer1=Button(self,text='Joe Louis Arena',command=lambda: controller.show_frame('correct')) # shows the incorrect answer page
+        answer1=Button(self,text='Joe Louis Arena',command=lambda: MainGame.correctAnswer(controller,self)) # shows the incorrect answer page
         answer2=Button(self,text='Madison Square Garden',command=lambda: controller.show_frame('incorrect'))
         answer3=Button(self,text='Capital One Arena',command=lambda: controller.show_frame('incorrect'))
         answer4=Button(self,text='T-Mobile Arena',command=lambda: controller.show_frame('incorrect'))
@@ -149,7 +155,7 @@ class locations1(Frame):
         question=Label(self,text="What city in Michigan has the nickname \"Motor City\"?")
         question.grid(row=0,column=2)
 
-        answer1=Button(self,text='Detroit',command=lambda: controller.show_frame('correct'))
+        answer1=Button(self,text='Detroit',command=lambda: MainGame.correctAnswer(controller,self))
         answer2=Button(self,text='Grand Rapids',command=lambda: controller.show_frame('incorrect'))
         answer3=Button(self,text='Lansing',command=lambda: controller.show_frame('incorrect'))
         answer4=Button(self,text='Traverse',command=lambda: controller.show_frame('incorrect'))
@@ -172,7 +178,7 @@ class locations2(Frame):
 
         answer1=Button(self,text='Tahquamenon Falls',command=lambda: controller.show_frame('incorrect'))
         answer2=Button(self,text='Pictured Rocks',command=lambda: controller.show_frame('incorrect'))
-        answer3=Button(self,text='Mackinac Island',command=lambda: controller.show_frame('correct'))
+        answer3=Button(self,text='Mackinac Island',command=lambda: MainGame.correctAnswer(controller,self))
         answer4=Button(self,text='Kitch-iti-kipi',command=lambda: controller.show_frame('incorrect'))
 
         answer1.grid(row=1,column=1)
@@ -193,7 +199,7 @@ class symbols1(Frame):
         question.grid(row=0,column=2)
 
         answer1=Button(self,text='Cardinal',command=lambda: controller.show_frame('incorrect'))
-        answer2=Button(self,text='American Robin',command=lambda: controller.show_frame('correct'))
+        answer2=Button(self,text='American Robin',command=lambda: MainGame.correctAnswer(controller,self))
         answer3=Button(self,text='Blue Jay',command=lambda: controller.show_frame('incorrect'))
         answer4=Button(self,text='Mourning Dove',command=lambda: controller.show_frame('incorrect'))
 
@@ -216,7 +222,7 @@ class symbols2(Frame):
         answer1=Button(self,text='Tropical Palm',command=lambda: controller.show_frame('incorrect'))
         answer2=Button(self,text='Cherry Blossom',command=lambda: controller.show_frame('incorrect'))
         answer3=Button(self,text='Oak Tree',command=lambda: controller.show_frame('incorrect'))
-        answer4=Button(self,text='White Pine',command=lambda: controller.show_frame('correct'))
+        answer4=Button(self,text='White Pine',command=lambda: MainGame.correctAnswer(controller,self))
 
         answer1.grid(row=1,column=1)
         answer2.grid(row=1,column=3)
@@ -234,7 +240,7 @@ class lighthouses1(Frame):
         question=Label(self,text="What was the first lighthouse built in Michigan?")
         question.grid(row=0,column=2)
 
-        answer1=Button(self,text='Fort Gratiot Lighthouse',command=lambda: controller.show_frame('correct'))
+        answer1=Button(self,text='Fort Gratiot Lighthouse',command=lambda: MainGame.correctAnswer(controller,self))
         answer2=Button(self,text='Round Island',command=lambda: controller.show_frame('incorrect'))
         answer3=Button(self,text='Battery Point',command=lambda: controller.show_frame('incorrect'))
         answer4=Button(self,text='Little Sable Point',command=lambda: controller.show_frame('incorrect'))
@@ -256,7 +262,7 @@ class lighthouses2(Frame):
         question.grid(row=0,column=2)
 
         answer1=Button(self,text='Round Island',command=lambda: controller.show_frame('incorrect'))
-        answer2=Button(self,text='Rock of Ages',command=lambda: controller.show_frame('correct'))
+        answer2=Button(self,text='Rock of Ages',command=lambda: MainGame.correctAnswer(controller,self))
         answer3=Button(self,text='Charity Island',command=lambda: controller.show_frame('incorrect'))
         answer4=Button(self,text='Mackinac Point',command=lambda: controller.show_frame('incorrect'))
 
@@ -287,11 +293,15 @@ class correct(Frame):
         self.controller=controller
         self.root=root #defines the root so we can use it to close the client
         msg=Label(self,text='Correct! You\'ve earned one point!')
+        self.points=Label(self,text='') #self.points so it can be called by other classes, if i remove the "self" it only exists in the context of __init__
+        filler=Label(self,text='                        ')
         moveon=Button(self,text='Continue',command=lambda:controller.show_frame('homePage')) 
-        endgame=Button(self,text='End Game',command=root.destroy) # Closes client
-        msg.grid(row=1,column=2)
-        moveon.grid(row=2,column=1)
-        endgame.grid(row=2,column=3)
-        
+        endgame=Button(self,text='End Game',command=root.destroy) # Closes the game
+        msg.grid(row=1,column=3)
+        self.points.grid(row=2,column=3)
+        filler.grid(row=3,column=1)
+        moveon.grid(row=3,column=2)
+        endgame.grid(row=3,column=4)
+
 root=MainGame()
 root.mainloop()
